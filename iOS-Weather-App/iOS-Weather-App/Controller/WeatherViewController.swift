@@ -13,15 +13,17 @@ import SwiftyJSON
 
 class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
-    let DARK_SKY_API = "https://api.darksky.net/forecast/fce3d31ef66ca3d79371afec681e88c4"
-    let KEY = "fce3d31ef66ca3d79371afec681e88c4"
+    //MARK: API Setup
     
-    // example API call: https://geocode.xyz/51.50354,-0.12768?geoit=json
+    let DARK_SKY_API = "https://api.darksky.net/forecast/fce3d31ef66ca3d79371afec681e88c4"
     
     let GEO_CODE_API =
     "https://geocode.xyz"
     
+    
+    //MARK: Instances
     let locationManager = CLLocationManager()
+    let weatherDataModel = WeatherDataModel()
     
     //Pre-linked IBOutlets
     @IBOutlet weak var weatherIcon: UIImageView!
@@ -38,8 +40,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        
-        
     }
     //MARK: Get location data
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -55,7 +55,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             
             let locationUrl = "\(GEO_CODE_API)/\(params["lat"]!),\(params["long"]!)?geoit=json"
             getWeatherData(weatherUrl: weatherUrl, locationUrl: locationUrl)
-            print(locationUrl)
             
         }
     }
@@ -69,34 +68,47 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         Alamofire.request(weatherUrl, method: .get).responseJSON {
             response in
             if response.result.isSuccess {
-                print("Success! We got that data")
                 
                 let weatherJSON: JSON = JSON(response.result.value!)
                 
                 let result = weatherJSON["currently"]["temperature"]
                 
-                let calculatedResult = self.fahrenheitToCelsius(temp: result.double!)
+                if let tempResult = result.double {
+                    
+                    let calculatedResult = self.fahrenheitToCelsius(temp: tempResult)
+                    
+                    self.weatherDataModel.temperature = Int(round(calculatedResult))
+                    
+                    self.weatherDataModel.condition = weatherJSON["currently"]["summary"].stringValue
+                    
+                    self.weatherDataModel.weatherIconName = self.weatherDataModel.determineWeatherIcon(condition: weatherJSON["currently"]["icon"].stringValue)
+                    
+                    self.updateUI()
+                    
+                } else {
+                    print("Error: \(response.result.error)")
+                    self.cityLabel.text = "Weather Unavailable"
+                }
                 
-                let formattedResult = String(format:"%.0f", round(calculatedResult))
-                
-                self.temperatureLabel.text = "\(formattedResult)°"
                 
             } else {
                 print("Error: \(response.result.error)")
                 self.cityLabel.text = "Connection issues"
             }
         }
-        
+        //MARK: Get Location Data
         Alamofire.request(locationUrl, method: .get).responseJSON {
             response in
             if response.result.isSuccess {
-                print("Success! We got that data")
                 
                 let locationJSON: JSON = JSON(response.result.value!)
                 
                 let result = locationJSON["city"]
                 
-                self.cityLabel.text = result.stringValue.capitalized
+                self.weatherDataModel.city = result.stringValue.capitalized
+                
+                self.updateUI()
+                
             }
             else {
                 print("Error: \(response.result.error)")
@@ -108,6 +120,15 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     func fahrenheitToCelsius (temp: Double) -> Double {
         return (temp - 32) * (5/9)
+    }
+    
+    //MARK: Update UI
+    func updateUI() {
+        if weatherDataModel.city != "" && weatherDataModel.weatherIconName != "" {
+            cityLabel.text = weatherDataModel.city
+            temperatureLabel.text = "\(weatherDataModel.temperature)°"
+            weatherIcon.image = UIImage(named: weatherDataModel.weatherIconName)
+        }
     }
 }
 
