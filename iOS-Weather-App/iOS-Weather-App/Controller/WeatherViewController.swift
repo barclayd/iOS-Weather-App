@@ -11,7 +11,7 @@ import CoreLocation
 import Alamofire
 import SwiftyJSON
 
-class WeatherViewController: UIViewController, CLLocationManagerDelegate {
+class WeatherViewController: UIViewController, CLLocationManagerDelegate, ChangeCityDelegate {
     
     //MARK: API Setup
     
@@ -130,6 +130,22 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             weatherIcon.image = UIImage(named: weatherDataModel.weatherIconName)
         }
     }
+    
+    //MARK: Protocol handling of ChangeCityDelegate
+    
+    func userEnteredANewCityName(city: String) {
+        print(city)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "changeCityName" {
+            let destinationVC = segue.destination as! ChangeCityViewController
+            
+            destinationVC.delegate = self
+            
+        }
+    }
+    
 }
 
 
