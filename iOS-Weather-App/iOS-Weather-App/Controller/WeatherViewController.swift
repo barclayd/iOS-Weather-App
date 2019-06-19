@@ -81,6 +81,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
                     
                     self.weatherDataModel.condition = weatherJSON["currently"]["summary"].stringValue
                     
+                    print(weatherJSON["currently"]["icon"].stringValue)
+                    
                     self.weatherDataModel.weatherIconName = self.weatherDataModel.determineWeatherIcon(condition: weatherJSON["currently"]["icon"].stringValue)
                     
                     self.updateUI()
@@ -134,7 +136,45 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     //MARK: Protocol handling of ChangeCityDelegate
     
     func userEnteredANewCityName(city: String) {
-        print(city)
+        
+        let weatherURL = "\(GEO_CODE_API)/\(city.lowercased())?geoit=json"
+        
+        
+        getWeatherCoordinates(url: weatherURL, finished: {lat, long in
+            
+            let weatherUrl = "\(self.DARK_SKY_API)/\(lat),\(long)"
+            
+            let locationUrl = "\(self.GEO_CODE_API)/\(lat),\(long)?geoit=json"
+            self.getWeatherData(weatherUrl: weatherUrl, locationUrl: locationUrl)
+            
+        })
+        
+    }
+    
+    func getWeatherCoordinates(url: String, finished: @escaping (String, String) -> Void) {
+        
+        var lat : String?
+        var long: String?
+        
+        Alamofire.request(url).responseJSON {
+            response in
+            if response.result.isSuccess {
+                
+                let locationJSON: JSON = JSON(response.result.value!)
+                
+                lat = locationJSON["latt"].stringValue
+                
+                long = locationJSON["longt"].stringValue
+                
+            }
+            else {
+                print("Error: \(response.result.error)")
+                self.cityLabel.text = "Connection issues"
+            }
+            if (lat != nil) && (long != nil) {
+                finished(lat!, long!)
+            }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

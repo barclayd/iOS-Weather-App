@@ -25,7 +25,6 @@ class ChangeCityViewController: UIViewController {
     @IBAction func getWeatherPressed(_ sender: AnyObject) {
     
         let cityName = changeCityTextField.text!
-        // check if delegate is not nill
         delegate?.userEnteredANewCityName(city: cityName)
         self.dismiss(animated: true, completion: nil)
     }

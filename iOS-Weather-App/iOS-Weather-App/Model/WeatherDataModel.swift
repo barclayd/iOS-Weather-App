@@ -19,8 +19,10 @@ class WeatherDataModel {
     
     func determineWeatherIcon(condition: String) -> String {
         switch condition {
+        case "clear-day":
+            return "sunny"
         case "clear-night":
-            return "dunno"
+            return "sunny"
         case "rain":
             return "shower3"
         case "snow":
@@ -34,6 +36,8 @@ class WeatherDataModel {
         case "cloudy":
             return "cloudy2"
         case "partly cloudy":
+            return "cloudy2"
+        case "partly-cloudy-day":
             return "cloudy2"
         case "partly-cloudy-night":
             return "cloudy2"
