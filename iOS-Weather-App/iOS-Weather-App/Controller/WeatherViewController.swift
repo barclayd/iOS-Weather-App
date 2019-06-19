@@ -20,6 +20,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     let GEO_CODE_API =
     "https://geocode.xyz"
     
+    var tempScale : Character = "C"
+    var lastFoundTemp: Double?
     
     //MARK: Instances
     let locationManager = CLLocationManager()
@@ -29,7 +31,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     @IBOutlet weak var weatherIcon: UIImageView!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
-    
+    @IBOutlet weak var tempScaleLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +60,24 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
             
         }
     }
+    @IBAction func switchToggled(_ sender: UISwitch) {
+        tempScaleLabel.text = sender.isOn ? "°C" : "°F"
+        if sender.isOn {
+            tempScale = "C"
+            displayNewTemp()
+        } else {
+            tempScale = "F"
+            displayNewTemp()
+        }
+    }
+    
+    func displayNewTemp() {
+        let tempText = String(format: "%.0f", changeTempScale(temp: lastFoundTemp!))
+        temperatureLabel.text = "\(tempText)°"
+        lastFoundTemp = changeTempScale(temp: lastFoundTemp!)
+    }
+    
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
         cityLabel.text = "Location Unavailable"
@@ -77,11 +97,11 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
                     
                     let calculatedResult = self.fahrenheitToCelsius(temp: tempResult)
                     
+                    self.lastFoundTemp = calculatedResult
+                    
                     self.weatherDataModel.temperature = Int(round(calculatedResult))
                     
                     self.weatherDataModel.condition = weatherJSON["currently"]["summary"].stringValue
-                    
-                    print(weatherJSON["currently"]["icon"].stringValue)
                     
                     self.weatherDataModel.weatherIconName = self.weatherDataModel.determineWeatherIcon(condition: weatherJSON["currently"]["icon"].stringValue)
                     
@@ -121,7 +141,19 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     }
     
     func fahrenheitToCelsius (temp: Double) -> Double {
-        return (temp - 32) * (5/9)
+        if tempScale == "F" {
+            return temp
+        } else {
+            return (temp - 32) * (5/9)
+        }
+    }
+    
+    func changeTempScale (temp: Double) -> Double {
+            if tempScale == "C" {
+                return (temp - 32) * (5/9)
+            } else {
+                return (temp * 9/5) + 32
+            }
     }
     
     //MARK: Update UI

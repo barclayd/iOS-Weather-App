@@ -40,8 +40,8 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VNR-V6-HMc" userLabel="Container View">
                                 <rect key="frame" x="0.0" y="304" width="375" height="454"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="21.1°" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AT7-It-Fyf" userLabel="Temperature Label">
-                                        <rect key="frame" x="105" y="0.0" width="254" height="127"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="22°" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AT7-It-Fyf" userLabel="Temperature Label">
+                                        <rect key="frame" x="96" y="0.0" width="263" height="127"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="127" id="3JT-fb-JPK"/>
                                             <constraint firstAttribute="width" constant="168" id="K3i-F0-xBa"/>
@@ -76,6 +76,22 @@
                                     <constraint firstItem="Ssc-Cu-XmK" firstAttribute="top" secondItem="C11-fU-d6q" secondAttribute="bottom" constant="2" id="xht-1J-4cs"/>
                                 </constraints>
                             </view>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3np-mX-oN4">
+                                <rect key="frame" x="16" y="63" width="49" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="switchToggled:" destination="vXZ-lx-hvc" eventType="valueChanged" id="bdK-cr-y9b"/>
+                                </connections>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="°C" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dCd-OB-WFS">
+                                <rect key="frame" x="16" y="102" width="47" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.99607843139999996" green="0.55294117649999996" blue="0.054901960780000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <rect key="contentStretch" x="1" y="1" width="1" height="1"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -92,6 +108,7 @@
                     </view>
                     <connections>
                         <outlet property="cityLabel" destination="Ssc-Cu-XmK" id="8PV-i3-tg0"/>
+                        <outlet property="tempScaleLabel" destination="dCd-OB-WFS" id="bTQ-0E-pOF"/>
                         <outlet property="temperatureLabel" destination="AT7-It-Fyf" id="aNl-QI-DaP"/>
                         <outlet property="weatherIcon" destination="C11-fU-d6q" id="AG2-gZ-vGX"/>
                     </connections>
